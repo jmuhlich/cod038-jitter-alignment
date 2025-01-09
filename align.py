@@ -1,5 +1,6 @@
 import concurrent.futures
 import functools
+import multiprocessing
 import skimage
 from skimage import transform
 from skimage.feature import match_descriptors, ORB
