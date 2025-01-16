@@ -1,0 +1,10 @@
+name: incucyte_stabilizer
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - numpy
+  - scikit-image
+  - threadpoolctl
+  - tifffile
+  - tqdm
