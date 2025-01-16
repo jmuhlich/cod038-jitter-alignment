@@ -18,7 +18,7 @@ import threadpoolctl
 import tifffile
 import tqdm
 import warnings
-import xml.etree
+from xml.etree import ElementTree
 
 
 def align_pair(img1, img2, seed=1):
@@ -136,7 +136,7 @@ def align_movie(phase_path, other_paths, output_path, pool, verbose):
         imgs_out[i] = timg
 
     tiff = tifffile.TiffFile(phase_path)
-    tree = xml.etree.ElementTree.parse(io.StringIO(tiff.pages[0].description))
+    tree = ElementTree.parse(io.StringIO(tiff.pages[0].description))
     pixel_size = [
         float(tree.find(f"./PlaneInfo/prop[@id='spatial-calibration-{dim}']").attrib["value"])
         for dim in ("x", "y")
