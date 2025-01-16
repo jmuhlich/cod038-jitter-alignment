@@ -81,7 +81,7 @@ def compose(tforms):
 
 def render(img, tform):
     # Transform multi-channel image with its own alignment transform.
-    timg = np.array([skimage.img_as_uint(warpc(ch, tform)) for ch in img])
+    timg = np.array([skimage.img_as_ubyte(warpc(ch, tform)) for ch in img])
     return timg
 
 
@@ -120,11 +120,11 @@ def align_movie(phase_path, other_paths, output_path, pool, verbose):
 
     n_channels = len(other_paths) + 1
     imgs = np.pad(
-        skimage.img_as_uint(imgs[:, None, :, :]),
+        imgs[:, None, :, :],
         ((0, 0), (0, n_channels - 1), (0, 0), (0, 0)),
     )
     for i, p in enumerate(other_paths.values()):
-        tifffile.imread(p, out=imgs[:, i + 1])
+        imgs[:, i + 1] = np.clip(tifffile.imread(p), 0, 255)
     imgs_out = np.empty_like(imgs)
     for i, timg in enumerate(
         tqdm.tqdm(
