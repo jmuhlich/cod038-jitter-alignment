@@ -106,7 +106,7 @@ def align_movie(phase_path, other_paths, output_path, pool, verbose):
     if verbose:
         for i, (mo, k1, k2, ma, inl) in enumerate(results, 1):
             if mo:
-                print(f"{i:2} -- Translation: {np.linalg.norm(mo.translation)} /  Matches: {ma.shape[0]:4} / Inliers: {inl.sum():4}")
+                print(f"{i:2} -- Translation: {np.linalg.norm(mo.translation)} / Rotation: {mo.rotation:g} / Matches: {ma.shape[0]:4} / Inliers: {inl.sum():4}")
             else:
                 print(f"{i:2} -- Failed to converge")
 
@@ -149,6 +149,7 @@ def align_movie(phase_path, other_paths, output_path, pool, verbose):
         "PhysicalSizeYUnit": "µm",
         "Channel": {"Name": ["Phase"] + list(other_paths)},
     }
+    print(f"Writing output movie: {output_path.resolve()}")
     tifffile.imwrite(
         output_path, imgs_out, metadata=metadata, compression="adobe_deflate", predictor=True
     )
@@ -172,8 +173,11 @@ if __name__ == "__main__":
     if not args.input_path.exists():
         print(f"ERROR: input_path does not exist: {args.input_path.resolve()}")
         sys.exit(1)
-    if args.output_path.exists() and len(list(args.output_path.iterdir())):
-        print(f"WARNING: output_path exists, contents may be overwritten: {args.output_path.resolve()}")
+    if not args.output_path.exists():
+        print(f"ERROR: output_path does not exist: {args.output_path.resolve()}")
+        sys.exit(1)
+    if list(args.output_path.iterdir()):
+        print(f"WARNING: output_path contains files, contents may be overwritten: {args.output_path.resolve()}")
 
     if args.num_workers:
         n_workers = args.num_workers
